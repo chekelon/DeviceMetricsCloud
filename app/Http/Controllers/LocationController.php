@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\LocationResources;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Location;
@@ -13,17 +14,18 @@ class LocationController extends Controller
     
     public function index()
     {
-        $locations = \App\Models\Location::all();
+        $locations = LocationResources::collection(Location::with('sensors')->get());
+        
         return response()->json($locations);
     }
 
     public function show($id)
     {
-        $location = \App\Models\Location::find($id);
+        $location = Location::with('sensors')->find($id);
         if (!$location) {
             return response()->json(['message' => 'Location not found'], 404);
         }
-        return response()->json($location);
+        return response()->json(new LocationResources($location));
     }
 
     public function store(Request $request)

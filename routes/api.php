@@ -7,6 +7,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SensorController;
 use App\Http\Controllers\ReadingController;
+use App\Http\Controllers\UserController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -21,6 +22,9 @@ Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
+    //User routes
+    Route::post('user/fcm-token', [UserController::class, 'storeFCMToken']);
+
     //Regions routes
     Route::get('regiones',[RegionController::class, 'index']);
     Route::get('regiones/{id}', [RegionController::class, 'show']);

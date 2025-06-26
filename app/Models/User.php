@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'region_id',
+        'fcm_token', // Agregado para el token de FCM
         'password',
     ];
 

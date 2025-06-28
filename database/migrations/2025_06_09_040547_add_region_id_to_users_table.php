@@ -12,11 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('region_id')
-                ->nullable()
-                ->constrained('regions')
-                ->nullOnDelete()
-                ->after('email_verified_at');
+            $table->unsignedBigInteger('region_id')->after('remember_token');
+            $table->foreign('region_id')->references('id')->on('regions')->onDelete('cascade');
+
         });
     }
 

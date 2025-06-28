@@ -49,5 +49,13 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Get the region that owns the user.
+     */
+    public function region()
+    {
+        return $this->belongsTo(Region::class);
+    }
+
     
 }

@@ -17,6 +17,12 @@ class SensorController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'location_id' => 'required|integer|exists:locations,id',
+            'almacenamiento' => 'required|string|min:1|max:100',
+            'alert_max_value' => 'required|numeric',
+            'alert_min_value' => 'required|numeric',
+            'min_value' => 'required|numeric',
+            'max_value' => 'required|numeric',
+            'alert_notification_interval' => 'required|numeric',
         ]);
 
         if ($validator->fails()) {
@@ -26,6 +32,12 @@ class SensorController extends Controller
         $sensor = Sensor::create([
             'name' => $request->name,
             'location_id' => $request->location_id,
+            'almacenamiento' => $request->almacenamiento,
+            'min_value' => $request->min_value,
+            'max_value' => $request->max_value,
+            'alert_max_value' => $request->alert_max_value,
+            'alert_min_value' => $request->alert_min_value,
+            'alert_notification_interval' => $request->has('alert_notification_interval') ? $request->alert_notification_interval : 1,
         ]);
 
         return response()->json($sensor, 201);
@@ -34,7 +46,7 @@ class SensorController extends Controller
     public function show(Request $request, $id)
     {
         // Buscar el sensor por ID
-        $sensor= Sensor::with('readings')->find($id);
+        $sensor = Sensor::with(['readings', 'notifications'])->find($id);
         
         if (!$sensor) {
             return response()->json(['message' => 'Sensor not found'], 404);
@@ -113,7 +125,7 @@ class SensorController extends Controller
             return response()->json($validator->errors(), 422);
         }
         // Validar el ID del sensor
-        $sensor = Sensor::with('readings')->find($id);
+        $sensor = Sensor::with('readings','notifications')->find($id);
 
         if (!$sensor) {
             return response()->json(['message' => 'Sensor not found'], 404);

@@ -7,6 +7,8 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SensorController;
 use App\Http\Controllers\ReadingController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\NotificationController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -21,6 +23,9 @@ Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
+    //User routes
+    Route::post('user/fcm-token', [UserController::class, 'storeFCMToken']);
+
     //Regions routes
     Route::get('regiones',[RegionController::class, 'index']);
     Route::get('regiones/{id}', [RegionController::class, 'show']);
@@ -35,6 +40,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('sensors/{id}/history', [SensorController::class, 'history']);
     //Readings routes
     Route::post('readings', [ReadingController::class, 'store']);
+    //Notifications routes
+    Route::get('notifications/sensor/{id}', [NotificationController::class, 'show']);
     //Logout routes
     Route::get('logout', [AuthController::class, 'logout']);
 });

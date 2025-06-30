@@ -12,9 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('region_id')->after('remember_token');
-            $table->foreign('region_id')->references('id')->on('regions')->onDelete('cascade');
-
+            $table->string('fcm_token')->nullable()->after('remember_token')->comment('Firebase Cloud Messaging Token');
         });
     }
 
@@ -24,8 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['region_id']);
-            $table->dropColumn('region_id');
+            $table->dropColumn('fcm_token');
         });
     }
 };

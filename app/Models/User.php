@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'region_id',
+        'fcm_token', // Agregado para el token de FCM
         'password',
     ];
 
@@ -46,6 +47,14 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the region that owns the user.
+     */
+    public function region()
+    {
+        return $this->belongsTo(Region::class);
     }
 
     

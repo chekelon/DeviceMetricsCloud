@@ -13,7 +13,15 @@ class Sensor extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'location_id'];
+    protected $fillable = [
+        'name', 
+        'location_id',
+        'almacenamiento',
+        'alert_max_value', 
+        'alert_min_value',
+        'min_value',
+        'max_value',
+        ];
 
     /**
      * Get the location that owns the sensor.
@@ -34,5 +42,13 @@ class Sensor extends Model
     public function latestReading()
     {
         return $this->hasOne(Reading::class)->latestOfMany();
+    }
+
+    /**
+     * Get the notifications for the sensor.
+     */
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class)->orderByDesc('created_at')->limit(4);
     }
 }

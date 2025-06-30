@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ReadingResources extends JsonResource
+class NotificationResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,8 +16,9 @@ class ReadingResources extends JsonResource
     {
         return [
             'id' => $this->id,
-            'sensor_id' => $this->sensor_id,
-            'value' => $this->value,
+            'title' => $this->title,
+            'body' => $this->body,
+            'type' => $this->type,
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
         ];
     }

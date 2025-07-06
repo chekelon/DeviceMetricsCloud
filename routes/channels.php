@@ -5,7 +5,7 @@ use App\Models\Sensor; // Importa tu modelo Sensor
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth; // Importa la clase Auth para verificar autenticación
 
-Log::info('--- INICIO LOG AUTH BROADCAST ---');
+/*Log::info('--- INICIO LOG AUTH BROADCAST ---');
 Log::info('Request Channel Name: ' . request()->input('channel_name'));
 Log::info('Request Socket ID: ' . request()->input('socket_id'));
 
@@ -19,7 +19,7 @@ if (Auth::check()) {
     Log::info('Authenticated User Name: ' . Auth::user()->name);
 } else {
     Log::info('Usuario NO autenticado en Laravel para broadcasting.');
-}
+}*/
 
 
 

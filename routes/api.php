@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\ChatMessageSent;
 use App\Http\Controllers\RegionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -9,6 +10,10 @@ use App\Http\Controllers\SensorController;
 use App\Http\Controllers\ReadingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PusherAuthController;
+use App\Events\StatusConnectionDevice as Event;
+use App\Events\StatusConnectionDevice;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -22,9 +27,26 @@ Route::post('register', [\App\Http\Controllers\AuthController::class, 'register'
 Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
 
 
+// Ruta de prueba para disparar el evento
+Route::get('/send-test-event', function () {
+    event(new StatusConnectionDevice());
+    return "Evento de prueba enviado!";
+});
+
+Route::get('/status-connection-device', function () {
+    // ... en tu controlador o servicio
+        $user = Auth::user(); // O el usuario que envía el mensaje
+        $message = "Hola a todos en la sala!";
+        $roomId = 1; // ID de la sala de chat
+    event(new ChatMessageSent($user,$message, $roomId));
+    return "Evento de conexión de dispositivo enviado!";
+})->middleware('auth:sanctum');
+
+
 Route::middleware('auth:sanctum')->group(function () {
     //User routes
     Route::post('user/fcm-token', [UserController::class, 'storeFCMToken']);
+    Route::get('users', [UserController::class, 'index']);
 
     //Regions routes
     Route::get('regiones',[RegionController::class, 'index']);

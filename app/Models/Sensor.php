@@ -15,6 +15,7 @@ class Sensor extends Model
      */
     protected $fillable = [
         'name', 
+        'user_id',
         'location_id',
         'almacenamiento',
         'alert_max_value', 
@@ -51,4 +52,8 @@ class Sensor extends Model
     {
         return $this->hasMany(Notification::class)->orderByDesc('created_at')->limit(4);
     }
+
+
+
+    
 }

@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class LocationResources extends JsonResource
+class UserResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,11 +14,13 @@ class LocationResources extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return  [
+        return [
             'id' => $this->id,
             'name' => $this->name,
-            'sensors' => SensorResources::collection($this->whenLoaded('sensors')),
-            
+            'email' => $this->email,
+            'region_id' => $this->region_id,
+            'roles' =>  RoleResources::collection($this->whenLoaded('roles')),
+            'sensors' => $this->whenLoaded('sensors'),
         ];
     }
 }

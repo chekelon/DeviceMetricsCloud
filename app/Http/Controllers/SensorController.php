@@ -14,30 +14,40 @@ class SensorController extends Controller
 
     public function store(Request $request)
     {
+        
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'location_id' => 'required|integer|exists:locations,id',
-            'almacenamiento' => 'required|string|min:1|max:100',
-            'alert_max_value' => 'required|numeric',
-            'alert_min_value' => 'required|numeric',
-            'min_value' => 'required|numeric',
-            'max_value' => 'required|numeric',
-            'alert_notification_interval' => 'required|numeric',
+            'user'=>'required|string|exists:users,name',
+            'location' => 'required|string|exists:locations,name',
+            'almacenamiento' => 'required|string',
+            'alert_max_value' => 'required|string',
+            'alert_min_value' => 'required|string',
+            'min_value' => 'required|string',
+            'max_value' => 'required|string',
+            'alert_notification_interval' => 'required|string', // Intervalo de notificación de alerta en hrs
+            'interval_reading'=>'required|string', // Intervalo de lectura en minutos
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
+        
+        $user = \App\Models\User::where('name', $request->user)->first();
+        $location = \App\Models\Location::where('name',$request->location)->first();
+
         $sensor = Sensor::create([
             'name' => $request->name,
-            'location_id' => $request->location_id,
+            'user_id'=> $user->id,
+            'location_id' => $location->id,
             'almacenamiento' => $request->almacenamiento,
             'min_value' => $request->min_value,
             'max_value' => $request->max_value,
             'alert_max_value' => $request->alert_max_value,
             'alert_min_value' => $request->alert_min_value,
             'alert_notification_interval' => $request->has('alert_notification_interval') ? $request->alert_notification_interval : 1,
+            'interval_reading' => $request->has('interval_reading') ? $request->interval_reading : 60, // Intervalo de lectura en minutos
         ]);
 
         return response()->json($sensor, 201);

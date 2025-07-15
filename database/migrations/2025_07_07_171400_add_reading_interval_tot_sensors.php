@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('regions', function (Blueprint $table) {
-            $table->id();
-            $table->string("name")->unique();
-            $table->timestamps();
+        Schema::table('sensors', function (Blueprint $table) {
+            $table->integer('interval_reading')->after('alert_notification_interval')->default(60)->comment('Intervalo de lectura en minutos');
         });
     }
 
@@ -23,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('regions');
+        Schema::table('sensors', function (Blueprint $table) {
+            $table->dropColumn('interval_reading');
+        });
     }
 };

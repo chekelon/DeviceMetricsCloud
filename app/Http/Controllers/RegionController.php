@@ -12,9 +12,10 @@ class RegionController extends Controller
 
     public function index()
     {
-        $regions = Region::with('locations')->get();
+        $regions = Region::all();
 
-        return response()->json($regions);
+        return response()->json([
+            "regiones"=>$regions]);
     }
     public function show($id)
     {

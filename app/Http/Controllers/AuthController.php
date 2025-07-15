@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -17,18 +19,20 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'region_id' => 'required|integer|exists:regions,id',
+            'region_id' => 'required|string|exists:regions,name',// Assuming region_id is a string representing the region name
             'password' => 'required|string|min:8',
         ]);
-
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
         
+        $region = \App\Models\Region::where('name', $request->region_id)->first();
+
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'region_id' => $request->region_id,
+            'region_id' => $region->id,
             'password' => Hash::make($request->password),
         ]);
 
@@ -60,15 +64,15 @@ class AuthController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        $user = User::where('email', $request->email)->firstOrFail();
+        $user = User::where('email', $request->email)->with('roles')->firstOrFail();
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'message' => 'Hi, ' . $user->name . ', you are logged in successfully.',
             'access_token' => $token,
-            'sensor_id'=> $user->sensor->id,
+            'sensor_id' => $user->sensor ? $user->sensor->id : null,
             'token_type' => 'Bearer',
-            'user' => $user,
+            'user' => new UserResource($user),
         ]);
     }
 

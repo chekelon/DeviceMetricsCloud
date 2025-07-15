@@ -53,5 +53,7 @@ class Sensor extends Model
         return $this->hasMany(Notification::class)->orderByDesc('created_at')->limit(4);
     }
 
+
+
     
 }

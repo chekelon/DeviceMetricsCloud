@@ -179,15 +179,15 @@ class ReadingController extends Controller
         ];
         $ubication = $sensor->location->name;
         if ($value <= $sensor->alert_min_value) {
-            $alert['title'] = "Nivel Bajo de Agua - $ubication";
+            $alert['title'] = "Nivel Bajo de Agua en $ubication";
             $alert['body'] = "El nivel está por debajo del $sensor->alert_min_value%, en  $sensor->name ";
             $alert['type'] = 'min';
         } elseif ($value >= $sensor->alert_max_value) {
-            $alert['title'] = "Nivel Alto de agua - $ubication";
+            $alert['title'] = "Nivel Alto de agua en $ubication";
             $alert['body'] = "El nivel está por encima del $sensor->alert_max_value%, en $sensor->name ";
             $alert['type'] = 'max';
         } else if($value > 60 && $value < $sensor->alert_max_value){ 
-            $alert['title'] = 'Nivel Normal de agua - '.$ubication;
+            $alert['title'] = 'Nivel Normal de agua en '.$ubication;
             $alert['body'] = "El nivel está en un rango normal ($value%), en $sensor->name ";
             $alert['type'] = 'normal';
         

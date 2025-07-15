@@ -16,7 +16,8 @@ class LocationController extends Controller
     {
         $locations = LocationResources::collection(Location::with('sensors')->get());
         
-        return response()->json($locations);
+        return response()->json([
+            'locations' => $locations,]);
     }
 
     public function show($id)
@@ -32,16 +33,18 @@ class LocationController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'region_id' => 'required|integer|exists:regions,id',
+            'region' => 'required|string|exists:regions,name',
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
+        $region = \App\Models\Region::where('name', $request->region)->first();
+
         $location = Location::create([
             'name' => $request->name,
-            'region_id' => $request->region_id,
+            'region_id' => $region->id,
         ]);
 
         return response()->json($location, 201);

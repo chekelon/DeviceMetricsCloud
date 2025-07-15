@@ -46,6 +46,7 @@ Route::get('/status-connection-device', function () {
 Route::middleware('auth:sanctum')->group(function () {
     //User routes
     Route::post('user/fcm-token', [UserController::class, 'storeFCMToken']);
+    Route::get('users', [UserController::class, 'index']);
 
     //Regions routes
     Route::get('regiones',[RegionController::class, 'index']);

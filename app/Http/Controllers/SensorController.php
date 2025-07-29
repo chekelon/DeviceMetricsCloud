@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Sensor;
 use Carbon\Carbon;
+use App\Models\User;
+use App\Models\location;
 
 class SensorController extends Controller
 {
@@ -153,5 +155,82 @@ class SensorController extends Controller
         ]);
 
         return response()->json(new SensorResources($sensor), 200);
+    }
+
+    public function update(Request $request,$id)
+    {
+        // 1. Definir reglas de validación
+        // Para el 'name', usamos Rule::unique para asegurarnos de que el nombre sea único,
+        // pero ignoramos el nombre del sensor actual que estamos actualizando.
+        $sensor = Sensor::find($id);
+
+        if (!$sensor) {
+            return response()->json(['message' => 'Sensor not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required','string','max:255',
+            'user' => 'required|string|exists:users,name',
+            'location' => 'required|string|exists:locations,name',
+            'almacenamiento' => 'required|string',
+            'alert_max_value' => 'required|string',
+            'alert_min_value' => 'required|string',
+            'min_value' => 'required|string',
+            'max_value' => 'required|string',
+            'alert_notification_interval' => 'required|string', // Intervalo de notificación de alerta en hrs
+            'interval_reading' => 'required|string', // Intervalo de lectura en minutos
+        ]);
+
+        // 2. Manejar fallos de validación
+        if ($validator->fails()) {
+            // Devolver una respuesta JSON con los errores de validación y un código de estado 422 (Unprocessable Entity)
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        // 3. Obtener los IDs de user y location a partir de sus nombres
+        // Esto asume que tienes un campo 'name' en tus tablas 'users' y 'locations'
+        $user = User::where('name', $request->user)->first();
+        $location = Location::where('name', $request->location)->first();
+
+        // Verificar si el usuario o la ubicación existen
+        if (!$user) {
+            return response()->json(['message' => 'User not found.'], 404);
+        }
+        if (!$location) {
+            return response()->json(['message' => 'Location not found.'], 404);
+        }
+
+        // 4. Actualizar los atributos del sensor
+        // Asegúrate de que los nombres de los campos en la base de datos coincidan
+        // con los nombres de los campos en el request.
+        $sensor->name = $request->name;
+        $sensor->user_id = $user->id; // Asigna el ID del usuario
+        $sensor->location_id = $location->id; // Asigna el ID de la ubicación
+        $sensor->almacenamiento = $request->almacenamiento;
+        $sensor->alert_max_value = $request->alert_max_value;
+        $sensor->alert_min_value = $request->alert_min_value;
+        $sensor->min_value = $request->min_value;
+        $sensor->max_value = $request->max_value;
+        $sensor->alert_notification_interval = $request->alert_notification_interval;
+        $sensor->interval_reading = $request->interval_reading;
+
+        // 5. Guardar los cambios en la base de datos
+        $sensor->save();
+
+        // 6. Devolver una respuesta JSON de éxito con el sensor actualizado
+        return response()->json($sensor, 200);
+    }
+
+    public function showById($id)
+    {
+        // Buscar el sensor por ID
+        $sensor = Sensor::find($id);
+        
+        if (!$sensor) {
+            return response()->json(['message' => 'Sensor not found'], 404);
+        }
+
+        return response()->json(new SensorResources($sensor), 200);
+
     }
 }

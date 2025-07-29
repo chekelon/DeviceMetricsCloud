@@ -22,6 +22,8 @@ class Sensor extends Model
         'alert_min_value',
         'min_value',
         'max_value',
+        'alert_notification_interval',
+        'interval_reading'
         ];
 
     /**
@@ -51,6 +53,11 @@ class Sensor extends Model
     public function notifications()
     {
         return $this->hasMany(Notification::class)->orderByDesc('created_at')->limit(4);
+    }
+
+    public function user()
+    {
+        return $this->hasOne(User::class);
     }
 
 

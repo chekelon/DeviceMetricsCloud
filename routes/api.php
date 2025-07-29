@@ -58,8 +58,10 @@ Route::middleware('auth:sanctum')->group(function () {
     //Sensors routes
     Route::post('sensors', [SensorController::class, 'store']);
     Route::get('sensors/{id}', [SensorController::class, 'show']);
+    Route::get('sensors/{id}/show',[SensorController::class,'showById']);
     Route::post('search/sensor', [SensorController::class, 'searchByName']);
     Route::post('sensors/{id}/history', [SensorController::class, 'history']);
+    Route::post('sensors/{id}/update',[SensorController::class,'update']);
     //Readings routes
     Route::post('readings', [ReadingController::class, 'store']);
     //Notifications routes

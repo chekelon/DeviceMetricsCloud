@@ -23,4 +23,24 @@ class RegionController extends Controller
 
         return response()->json(new RegionResources($region),200);
     }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            // Agrega aquí otros campos según tu modelo Region
+        ]);
+
+        // Verifica si ya existe una región con el mismo nombre
+        if (Region::where('name', $validated['name'])->exists()) {
+            return response()->json([
+                'message' => 'La región ya existe.'
+            ], 409); // 409 Conflict
+        }
+
+        $region = Region::create($validated);
+
+        return response()->json(new RegionResources($region), 201);
+    }
+    
 }

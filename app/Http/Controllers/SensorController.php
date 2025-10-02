@@ -9,18 +9,20 @@ use App\Models\Sensor;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\location;
+use Illuminate\Support\Facades\Log;
 
 class SensorController extends Controller
 {
     
 
     public function store(Request $request)
-    {
-        
+    {   
+        $validator = null;
 
-        $validator = Validator::make($request->all(), [
+        if($request->type_sensor == 'ultrasonido'){
+            $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'user'=>'required|string|exists:users,name',
+            'type_sensor'=>'required|string|exists:sensors_type,name',
             'location' => 'required|string|exists:locations,name',
             'almacenamiento' => 'required|string',
             'alert_max_value' => 'required|string',
@@ -29,19 +31,30 @@ class SensorController extends Controller
             'max_value' => 'required|string',
             'alert_notification_interval' => 'required|string', // Intervalo de notificación de alerta en hrs
             'interval_reading'=>'required|string', // Intervalo de lectura en minutos
-        ]);
+            ]);
+        }else{
+            $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'type_sensor'=>'required|string|exists:sensors_type,name',
+            'location' => 'required|string|exists:locations,name',
+            ]);
+        }
+        
+        
+        
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
         
-        $user = \App\Models\User::where('name', $request->user)->first();
+        $type_sensor = \App\Models\SensorType::where('name', $request->type_sensor)->first();
         $location = \App\Models\Location::where('name',$request->location)->first();
 
-        $sensor = Sensor::create([
+        if($request->type_sensor == 'ultrasonido'){
+            $sensor = Sensor::create([
             'name' => $request->name,
-            'user_id'=> $user->id,
+            'type_sensor_id'=> $type_sensor->id,
             'location_id' => $location->id,
             'almacenamiento' => $request->almacenamiento,
             'min_value' => $request->min_value,
@@ -51,6 +64,16 @@ class SensorController extends Controller
             'alert_notification_interval' => $request->has('alert_notification_interval') ? $request->alert_notification_interval : 1,
             'interval_reading' => $request->has('interval_reading') ? $request->interval_reading : 60, // Intervalo de lectura en minutos
         ]);
+
+        }else{
+            $sensor = Sensor::create([
+                'name' => $request->name,
+                'type_sensor_id'=> $type_sensor->id,
+                'location_id' => $location->id,
+            ]);
+        }
+
+        
 
         return response()->json($sensor, 201);
     }

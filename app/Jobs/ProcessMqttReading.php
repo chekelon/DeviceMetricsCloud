@@ -30,8 +30,10 @@ class ProcessMqttReading implements ShouldQueue
     public function handle(): void
     {
         try {
+    
             Reading::create($this->readingData);
-            Log::info("Lectura guardada desde la cola.");
+            
+
         } catch (\Exception $e) {
             Log::error('Error al guardar la lectura desde la cola: ' . $e->getMessage());
         }

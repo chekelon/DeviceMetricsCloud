@@ -52,7 +52,7 @@ class DatabaseSeeder extends Seeder
                 ))->count(1)->create();
         }
 
-        $sensores = \App\Models\Sensor::all();
+        //$sensores = \App\Models\Sensor::all();
         /*for ($i=0; $i < $sensores->count()-1 ; $i++) { 
             Reading::factory()
             ->state(new Sequence(
@@ -61,11 +61,11 @@ class DatabaseSeeder extends Seeder
         }*/
         
         // 2. Define el rango de fechas para el mes (ej. el mes anterior)
-        $startDate = Carbon::now()->startOfMonth();
-        $endDate = Carbon::now()->endOfMonth();
+        //$startDate = Carbon::now()->startOfMonth();
+        //$endDate = Carbon::now()->endOfMonth();
         // 3. Itera cada 30 minutos dentro del rango del mes
-        $currentDate = $startDate->copy(); // Usa copy() para no modificar el objeto original
-        for ($i=0; $i < $sensores->count()-1 ; $i++) { 
+        //$currentDate = $startDate->copy(); // Usa copy() para no modificar el objeto original
+        /*for ($i=0; $i < $sensores->count()-1 ; $i++) { 
             while ($currentDate->lessThanOrEqualTo($endDate)) {
             // Crea una lectura usando el factory, y sobrescribe los atributos
             // 'sensor_id', 'created_at' y 'updated_at' con los valores específicos
@@ -79,7 +79,7 @@ class DatabaseSeeder extends Seeder
             // Avanza 30 minutos para la siguiente lectura
             $currentDate->addMinutes(30);
             }
-        }
+        }*/
 
         
         

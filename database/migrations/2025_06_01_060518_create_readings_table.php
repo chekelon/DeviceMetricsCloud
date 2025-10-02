@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('sensor_id');
             $table->foreign('sensor_id')->references('id')->on('sensors')->onDelete('cascade');
-            $table->decimal('value', 3,0); 
+            $table->decimal('value', 3,1); 
             $table->timestamps();
         });
     }

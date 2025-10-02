@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SensorController;
+use App\Http\Controllers\TypeSensorController;
 use App\Http\Controllers\ReadingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificationController;
@@ -48,6 +49,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('user/fcm-token', [UserController::class, 'storeFCMToken']);
     Route::get('users', [UserController::class, 'index']);
 
+   
+
     //Regions routes
     Route::get('regiones',[RegionController::class, 'index']);
     Route::get('regiones/{id}', [RegionController::class, 'show']);
@@ -63,6 +66,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('search/sensor', [SensorController::class, 'searchByName']);
     Route::post('sensors/{id}/history', [SensorController::class, 'history']);
     Route::post('sensors/{id}/update',[SensorController::class,'update']);
+     // Tipo de sensor routes
+    Route::get('sensor-types', [TypeSensorController::class, 'index']);
     //Readings routes
     Route::post('readings', [ReadingController::class, 'store']);
     //Notifications routes

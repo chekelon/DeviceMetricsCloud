@@ -16,6 +16,8 @@ class Sensor extends Model
     protected $fillable = [
         'name', 
         'user_id',
+        'type_sensor_id',
+        'sensor_type_id',
         'location_id',
         'almacenamiento',
         'alert_max_value', 
@@ -55,11 +57,12 @@ class Sensor extends Model
         return $this->hasMany(Notification::class)->orderByDesc('created_at')->limit(4);
     }
 
-    public function user()
-    {
-        return $this->hasOne(User::class);
-    }
 
+
+    public function sensorType()
+    {
+        return $this->belongsTo(SensorType::class);
+    }
 
 
     

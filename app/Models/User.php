@@ -57,10 +57,7 @@ class User extends Authenticatable
         return $this->belongsTo(Region::class);
     }
 
-    public function sensor()
-    {
-        return $this->hasOne(Sensor::class);
-    } 
+
 
     public function roles()
     {

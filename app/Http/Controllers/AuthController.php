@@ -70,7 +70,6 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Hi, ' . $user->name . ', you are logged in successfully.',
             'access_token' => $token,
-            'sensor_id' => $user->sensor ? $user->sensor->id : null,
             'interval_reading'=> $user->sensor ? $user->sensor->interval_reading : null,
             'token_type' => 'Bearer',
             'user' => new UserResource($user),

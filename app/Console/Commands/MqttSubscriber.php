@@ -18,6 +18,8 @@ class MqttSubscriber extends Command
      */
     protected $signature = 'app:mqtt-subscriber';
 
+    protected $readingData = null;
+
     /**
      * The console command description.
      *
@@ -48,22 +50,34 @@ class MqttSubscriber extends Command
             
             $data = json_decode($message, true);
             //Log::info("Mensaje recibido en el tópico {$topic}: ".$message);
+
+            Log::info("Mensaje recibido en el tópico {$topic}: ID: {$data['sensor_id']} - Value: {$data['value']}- Tipo: {$data['tipo']}");
             
-            Log::info("Mensaje recibido en el tópico {$topic}: ID: {$data['sensor_id']} - Value: {$data['value']}");
 
-            if (isset($data['value']) && isset($data['sensor_id']) && $data['tipo'] == 'distancia') {
-
+            if (!empty($data['value']) && !empty($data['sensor_id']) && $data['tipo'] == 'distancia') {
+                
                 $sensor = Sensor::findOrFail($data['sensor_id']);
-                                            
-                $valueResult = (int) ($data['value'] - $sensor->min_value) / ($sensor->max_value - $sensor->min_value) * 100;
-                $valuePorcentReal = 100 -$valueResult;
+                
+                $valueResult = round(($data['value'] - $sensor->min_value) / ($sensor->max_value - $sensor->min_value)  * 100);
+                $valuePorcentReal = 100 - $valueResult;
 
                 $readingData = [
-                'sensor_id' => $data['sensor_id'],
+                'sensor_id' => $sensor->id,
                 'value' => $valuePorcentReal
                 ];
 
-                // Enviar el trabajo a la cola
+                ProcessMqttReading::dispatch($readingData);
+            }
+   
+            if (isset($data['value']) && !empty($data['sensor_id']) &&  $data['tipo'] == 'flujo') {
+                $sensorFlujo = Sensor::findOrFail($data['sensor_id']);
+
+                $readingData = [
+                'sensor_id' => $sensorFlujo->id,
+                'value' => (float) $data['value']
+                ];
+
+                Log::info("Despachando job para sensor ID: {$sensorFlujo->id} con valor: {$data['value']}");
                 ProcessMqttReading::dispatch($readingData);
 
             }

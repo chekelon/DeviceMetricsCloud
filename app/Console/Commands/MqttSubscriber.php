@@ -74,7 +74,9 @@ class MqttSubscriber extends Command
 
                 $readingData = [
                 'sensor_id' => $sensorFlujo->id,
-                'value' => (float) $data['value']
+                'value' => (float) $data['value'],
+                'created_at' => now(),
+                'updated_at' => now(),
                 ];
 
                 Log::info("Despachando job para sensor ID: {$sensorFlujo->id} con valor: {$data['value']}");

@@ -58,9 +58,25 @@ class MqttSubscriber extends Command
                 
                 $sensor = Sensor::findOrFail($data['sensor_id']);
                 
-                $valueResult = round(($data['value'] - $sensor->min_value) / ($sensor->max_value - $sensor->min_value)  * 100);
-                $valuePorcentReal = 100 - $valueResult;
 
+                switch ($data['value']) {
+                    case $data['value'] < $sensor->min_value:
+                        $valuePorcentReal = 0;
+                        break;
+                    case $data['value'] > $sensor->max_value:
+                        $valuePorcentReal = 100;
+                        break;
+                    
+                    case $data['value'] >= $sensor->min_value && $data['value'] <= $sensor->max_value:
+                        // Normalizar el valor al rango 0-100
+                        $valueResult = round(($sensor->max_value - $data['value']) / ($sensor->max_value - $sensor->min_value)  * 100);
+                        $valuePorcentReal = $valueResult;
+                        break;
+                    default:
+                        # code...
+                        break;
+                }
+    
                 $readingData = [
                 'sensor_id' => $sensor->id,
                 'value' => $valuePorcentReal

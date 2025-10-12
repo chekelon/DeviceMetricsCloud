@@ -19,7 +19,7 @@ class SensorController extends Controller
     {   
         $validator = null;
 
-        if($request->type_sensor == 'ultrasonido'){
+        if($request->type_sensor == 'ultrasonico'){
             $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'type_sensor'=>'required|string|exists:sensors_type,name',
@@ -51,7 +51,7 @@ class SensorController extends Controller
         $type_sensor = \App\Models\SensorType::where('name', $request->type_sensor)->first();
         $location = \App\Models\Location::where('name',$request->location)->first();
 
-        if($request->type_sensor == 'ultrasonido'){
+        if($request->type_sensor == 'ultrasonico'){
             $sensor = Sensor::create([
             'name' => $request->name,
             'type_sensor_id'=> $type_sensor->id,

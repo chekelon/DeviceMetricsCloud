@@ -7,6 +7,7 @@ use PhpMqtt\Client\MqttClient;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\ProcessMqttReading;
 use App\Models\Sensor;
+use App\Models\Reading;
 
 
 class MqttSubscriber extends Command
@@ -39,10 +40,11 @@ class MqttSubscriber extends Command
         $port = 1883;
         $clientId = 'laravel-app';
         $topic = 'edificio/#';
+        $keepAlive = 60;
 
         $mqtt = new MqttClient($server, $port, $clientId);
         Log::info("Connecting to broker at {$server}:{$port}...");
-        $mqtt->connect(null,true,300);
+        $mqtt->connect(null,true,300,$keepAlive);
         Log::info("Connected to broker. Subscribing to topic '{$topic}'...");
 
         $mqtt->subscribe($topic, function ($topic, $message) {
@@ -81,8 +83,17 @@ class MqttSubscriber extends Command
                 'sensor_id' => $sensor->id,
                 'value' => $valuePorcentReal
                 ];
-
-                ProcessMqttReading::dispatch($readingData);
+                
+                $lastReading = Reading::where('sensor_id', $sensor->id)->latest()->first(); 
+                $tolerancia = 5.0;
+                $valorResultado = abs($lastReading->value - $valuePorcentReal);
+                
+                if( $valorResultado <= $tolerancia ){
+                    ProcessMqttReading::dispatch($readingData);
+                }else{
+                    Log::info("Lectura descartada por estar fuera de la tolerancia con valor: {$valuePorcentReal}");
+                }
+                
             }
    
             if (isset($data['value']) && !empty($data['sensor_id']) &&  $data['tipo'] == 'flujo') {

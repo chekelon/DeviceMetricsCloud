@@ -87,10 +87,9 @@ class MqttSubscriber extends Command
                 $lastReading = Reading::where('sensor_id', $sensor->id)->latest()->first(); 
                 $toleranciaMax = 10.0;
                 $toleranciaMin = 5.0;
-                $valorResultadoMax = abs($lastReading->value + $valuePorcentReal);
-                $valorResultadoMin = abs($lastReading->value - $valuePorcentReal);
+                $valorResultado = abs($lastReading->value - $valuePorcentReal);
                 
-                if( $valorResultadoMax <= $toleranciaMax || $valorResultadoMin <= $toleranciaMin ){
+                if( $valorResultado <= $toleranciaMax || $valorResultado <= $toleranciaMin ){
                     ProcessMqttReading::dispatch($readingData);
                 }else{
                     Log::info("Lectura descartada por estar fuera de la tolerancia con valor: {$valuePorcentReal}");

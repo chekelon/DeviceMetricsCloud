@@ -59,16 +59,13 @@ class MqttSubscriber extends Command
             if (!empty($data['value']) && !empty($data['sensor_id']) && $data['tipo'] == 'distancia') {
                 
                 $sensor = Sensor::findOrFail($data['sensor_id']);
-                
+                 
 
                 switch ($data['value']) {
-                    case $data['value'] < $sensor->min_value:
+                    case ($data['value'] + $sensor->min_value) >= $sensor->max_value:
                         $valuePorcentReal = 0;
                         break;
-                    case $data['value'] > $sensor->max_value:
-                        $valuePorcentReal = 100;
-                        break;
-                    case $data['value'] >= $sensor->min_value && $data['value'] <= $sensor->max_value:
+                    case $data['value'] >= $sensor->min_value && $data['value'] < $sensor->max_value:
                         // Normalizar el valor al rango 0-100
                         $valueResult = round((($sensor->max_value - ($data['value'] + $sensor->min_value )) / $sensor->max_value)   * 100);
                         $valuePorcentReal = $valueResult;
@@ -84,8 +81,8 @@ class MqttSubscriber extends Command
                 ];
                 
                 $lastReading = Reading::where('sensor_id', $sensor->id)->latest()->first(); 
-                $toleranciaMax = 20.0;
-                $toleranciaMin = 15.0;
+                $toleranciaMax = 10.0;
+                $toleranciaMin = 10.0;
                 $valorResultado = abs($lastReading->value - $valuePorcentReal);
                 
                 if( $valorResultado <= $toleranciaMax || $valorResultado <= $toleranciaMin ){

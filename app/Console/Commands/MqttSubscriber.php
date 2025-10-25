@@ -68,10 +68,9 @@ class MqttSubscriber extends Command
                     case $data['value'] > $sensor->max_value:
                         $valuePorcentReal = 100;
                         break;
-                    
                     case $data['value'] >= $sensor->min_value && $data['value'] <= $sensor->max_value:
                         // Normalizar el valor al rango 0-100
-                        $valueResult = round(($sensor->max_value - $data['value']) / ($sensor->max_value - $sensor->min_value)  * 100);
+                        $valueResult = round((($sensor->max_value - ($data['value'] + $sensor->min_value )) / $sensor->max_value)   * 100);
                         $valuePorcentReal = $valueResult;
                         break;
                     default:

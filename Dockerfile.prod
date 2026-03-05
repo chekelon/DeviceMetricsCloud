@@ -1,0 +1,61 @@
+# --- ETAPA 1: Build de assets (Tailwind) ---
+FROM node:24-alpine AS assets_builder
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+RUN npm run build   # Genera /app/public/build con Tailwind compilado
+
+# --- ETAPA 2: Imagen de producción ---
+FROM php:8.2-fpm-alpine
+
+
+RUN apk add --no-cache \
+    nginx git curl zip unzip \
+    libpng-dev libxml2-dev oniguruma-dev \
+    libzip-dev icu-dev bash supervisor
+
+RUN docker-php-ext-install \
+    pdo_mysql mbstring exif pcntl bcmath gd intl zip
+
+# Redis extension
+RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && apk del .build-deps
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Nginx config de producción
+RUN rm -rf /etc/nginx/http.d/*
+COPY docker/nginx/prod.conf /etc/nginx/http.d/default.conf
+
+WORKDIR /var/www/html
+
+# Copiar código fuente
+COPY . .
+
+# Copiar assets ya compilados desde la etapa anterior
+COPY --from=assets_builder /app/public/build ./public/build
+
+# Instalar dependencias PHP sin dev
+RUN composer install --optimize-autoloader --no-dev
+
+# Permisos
+RUN mkdir -p storage/framework/{sessions,views,cache} \
+    storage/logs bootstrap/cache \
+    && chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 storage bootstrap/cache
+
+RUN mkdir -p /var/log/supervisor /var/run \
+    && chmod 777 /var/run
+
+COPY docker/supervisor/prod.conf /etc/supervisor/conf.d/supervisord.conf
+COPY docker/scripts/start.prod.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
+EXPOSE 80
+
+CMD ["/usr/local/bin/start.sh"]

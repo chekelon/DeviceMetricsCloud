@@ -1,0 +1,81 @@
+# Dependencias
+node_modules/
+vendor/
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE y editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Archivos de entorno
+.env
+.env.backup
+.env.production
+.env.local
+
+# Storage y cache de Laravel
+storage/app/*
+!storage/app/.gitignore
+!storage/app/public/
+storage/framework/cache/*
+!storage/framework/cache/.gitignore
+storage/framework/sessions/*
+!storage/framework/sessions/.gitignore
+storage/framework/views/*
+!storage/framework/views/.gitignore
+storage/logs/*
+!storage/logs/.gitignore
+bootstrap/cache/*
+!bootstrap/cache/.gitignore
+
+# Testing
+.phpunit.result.cache
+coverage/
+tests/
+
+# Build y compilación
+public/hot
+public/storage
+public/build
+public/mix-manifest.json
+
+# Docker
+docker-compose.yml.old
+Dockerfile.old
+*.dockerignore.old
+
+# Documentación
+README.md
+*.md
+docs/
+
+# Archivos temporales
+*.log
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# NPM y Yarn
+npm-debug.log
+yarn-error.log
+.npm/
+.yarn/
+
+# Composer
+composer.phar
+composer.lock
+
+# Archivos de sistema
+*.pid
+*.seed
+*.pid.lock

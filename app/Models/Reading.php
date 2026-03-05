@@ -28,8 +28,14 @@ class Reading extends Model
      *
      * @return string
      */
-    public function getFormattedTimestampAttribute()
+    public function getFormattedTimestampAttribute(\DateTimeInterface $date)
     {
-        return $this->timestamp->format('Y-m-d H:i:s');
+        return $date->format('Y-m-d H:i:s');
+    }
+
+    // Agrega esto 👇
+    protected function serializeDate(\DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
     }
 }

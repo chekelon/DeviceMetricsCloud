@@ -61,7 +61,7 @@ class Sensor extends Model
 
     public function sensorType()
     {
-        return $this->belongsTo(SensorType::class);
+        return $this->belongsTo(SensorType::class,'type_sensor_id');
     }
 
 

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use App\Jobs\ProcessMqttReading;
 use App\Models\Sensor;
 use App\Models\Reading;
+use PhpMqtt\Client\ConnectionSettings;
 
 
 class MqttSubscriber extends Command
@@ -36,15 +37,29 @@ class MqttSubscriber extends Command
         Log::info('Iniciando suscripción MQTT...');
         try{
         
-        $server = '52.8.74.58';
+        /*$server = '157.245.176.211';
         $port = 1883;
         $clientId = 'laravel-app';
         $topic = 'edificio/#';
         $keepAlive = 60;
+        $username = 'cheke';
+        $password = '123456';*/
+
+        $server   = env('MQTT_HOST');
+        $port     = env('MQTT_PORT');
+        $clientId = env('MQTT_CLIENT_ID');
+        $username = env('MQTT_USER');
+        $password = env('MQTT_PASSWORD');
+        $topic    = env('MQTT_TOPIC');
+
+        $settings = (new ConnectionSettings)
+            ->setUsername($username)
+            ->setPassword($password)
+            ->setKeepAliveInterval(60);
 
         $mqtt = new MqttClient($server, $port, $clientId);
         Log::info("Connecting to broker at {$server}:{$port}...");
-        $mqtt->connect(null,true,300,$keepAlive);
+        $mqtt->connect($settings);
         Log::info("Connected to broker. Subscribing to topic '{$topic}'...");
 
         $mqtt->subscribe($topic, function ($topic, $message) {
@@ -77,19 +92,19 @@ class MqttSubscriber extends Command
     
                 $readingData = [
                 'sensor_id' => $sensor->id,
-                'value' => $valuePorcentReal
+                'value' => $data['value']
                 ];
                 
-                $lastReading = Reading::where('sensor_id', $sensor->id)->latest()->first(); 
-                $toleranciaMax = 20.0;
-                $toleranciaMin = 20.0;
-                $valorResultado = abs($lastReading->value - $valuePorcentReal);
+                //$lastReading = Reading::where('sensor_id', $sensor->id)->latest()->first(); 
+                //$toleranciaMax = 20.0;
+                //$toleranciaMin = 20.0;
+                //$valorResultado = abs($lastReading->value - $valuePorcentReal);
                 
-                if( $valorResultado <= $toleranciaMax || $valorResultado <= $toleranciaMin ){
+                //if( $valorResultado <= $toleranciaMax || $valorResultado <= $toleranciaMin ){
                     ProcessMqttReading::dispatch($readingData);
-                }else{
-                    Log::info("Lectura descartada por estar fuera de la tolerancia con valor: {$valuePorcentReal}");
-                }
+                //}else{
+                //    Log::info("Lectura descartada por estar fuera de la tolerancia con valor: {$valuePorcentReal}");
+                //}
                 
             }
    

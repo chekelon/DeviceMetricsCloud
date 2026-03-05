@@ -8,8 +8,10 @@
         "php": "^8.2",
         "kreait/laravel-firebase": "6.0",
         "laravel/framework": "^11.0",
+        "laravel/jetstream": "^5.4",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
+        "livewire/livewire": "^3.6.4",
         "php-mqtt/client": "^2.2",
         "pusher/pusher-php-server": "~7.0"
     },

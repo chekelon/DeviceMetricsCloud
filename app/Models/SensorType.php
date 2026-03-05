@@ -12,4 +12,9 @@ class SensorType extends Model
         'name',
         'description'
     ];
+
+    public function sensors()
+    {
+        return $this->hasMany(Sensor::class, 'sensor_type_id');
+     }
 }

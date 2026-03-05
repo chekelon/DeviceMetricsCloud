@@ -37,6 +37,8 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - dbdata:/var/lib/mysql
+    ports:
+      - "127.0.0.1:3306:3306"
     # Sin puerto expuesto — en prod la DB no debe ser accesible externamente
     networks:
       - devicemetrics

@@ -1,14 +1,14 @@
 #!/bin/bash
 set -e
 
-mkdir -p /var/www/html/storage/framework/{sessions,views,cache}
-mkdir -p /var/www/html/storage/logs
-mkdir -p /var/www/html/bootstrap/cache
+mkdir -p /var/www/DeviceMetricsCloud/storage/framework/{sessions,views,cache}
+mkdir -p /var/www/DeviceMetricsCloud/storage/logs
+mkdir -p /var/www/DeviceMetricsCloud/bootstrap/cache
 
-chown -R www-data:www-data /var/www/html/storage
-chown -R www-data:www-data /var/www/html/bootstrap/cache
-chmod -R 775 /var/www/html/storage
-chmod -R 775 /var/www/html/bootstrap/cache
+chown -R www-data:www-data /var/www/DeviceMetricsCloud/storage
+chown -R www-data:www-data /var/www/DeviceMetricsCloud/bootstrap/cache
+chmod -R 775 /var/www/DeviceMetricsCloud/storage
+chmod -R 775 /var/www/DeviceMetricsCloud/bootstrap/cache
 
 # En prod el .env ya debe existir — no lo generamos automáticamente
 if [ ! -f /var/www/DeviceMetricsCloud/.env ]; then

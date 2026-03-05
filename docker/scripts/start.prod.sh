@@ -11,7 +11,7 @@ chmod -R 775 /var/www/html/storage
 chmod -R 775 /var/www/html/bootstrap/cache
 
 # En prod el .env ya debe existir — no lo generamos automáticamente
-if [ ! -f /var/www/html/.env ]; then
+if [ ! -f /var/www/DeviceMetricsCloud/.env ]; then
     echo "ERROR: .env no encontrado. El deploy debe proveerlo."
     exit 1
 fi

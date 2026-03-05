@@ -7,10 +7,7 @@ services:
     restart: unless-stopped
     working_dir: /var/www/DeviceMetricsCloud      # igual que en dev
     volumes:
-      - ./:/var/www/DeviceMetricsCloud
-      - ./.env:/var/www/DeviceMetricsCloud/.env                    # Solo el .env
-      - ./storage:/var/www/DeviceMetricsCloud/storage              # Storage persistente
-      - ./bootstrap/cache:/var/www/DeviceMetricsCloud/bootstrap/cache
+      - ./.env:/var/www/DeviceMetricsCloud/.env   # Solo el .env
     ports:
       - "80:80"
       - "443:443"

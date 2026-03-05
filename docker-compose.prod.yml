@@ -5,7 +5,9 @@ services:
       dockerfile: Dockerfile.prod
     container_name: devicemetrics_app
     restart: unless-stopped
-    working_dir: /var/www/html      # igual que en dev
+    working_dir: /var/www/DeviceMetricsCloud      # igual que en dev
+    volumes:
+      - ./:/var/www/DeviceMetricsCloud
     ports:
       - "80:80"
       - "443:443"

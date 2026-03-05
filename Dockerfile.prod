@@ -41,7 +41,7 @@ COPY . .
 COPY --from=assets_builder /app/public/build ./public/build
 
 # Instalar dependencias PHP sin dev
-RUN composer install --optimize-autoloader --no-dev
+RUN composer install --optimize-autoloader --no-dev --no-scripts
 
 # Permisos
 RUN mkdir -p storage/framework/{sessions,views,cache} \

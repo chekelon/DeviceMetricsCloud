@@ -16,6 +16,8 @@ if [ ! -f /var/www/html/.env ]; then
     exit 1
 fi
 
+php artisan package:discover --ansi
+
 # Optimizaciones de producción (en dev usabas config:clear, aquí cacheamos)
 php artisan config:cache
 php artisan route:cache

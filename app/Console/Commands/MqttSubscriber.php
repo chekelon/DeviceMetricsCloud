@@ -45,12 +45,12 @@ class MqttSubscriber extends Command
         $username = 'cheke';
         $password = '123456';*/
 
-        $server   = env('MQTT_HOST');
-        $port     = env('MQTT_PORT');
-        $clientId = env('MQTT_CLIENT_ID');
-        $username = env('MQTT_USER');
-        $password = env('MQTT_PASSWORD');
-        $topic    = env('MQTT_TOPIC');
+        $server   = config('mqtt.host');
+        $port     = config('mqtt.port');
+        $clientId = config('mqtt.client_id');
+        $username = config('mqtt.user');
+        $password = config('mqtt.password');
+        $topic    = config('mqtt.topic');
 
         $settings = (new ConnectionSettings)
             ->setUsername($username)

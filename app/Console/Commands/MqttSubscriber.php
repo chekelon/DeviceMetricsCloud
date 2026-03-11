@@ -110,7 +110,7 @@ class MqttSubscriber extends Command
    
             if (isset($data['value']) && !empty($data['sensor_id']) &&  $data['tipo'] == 'flujo') {
                 $sensorFlujo = Sensor::findOrFail($data['sensor_id']);
-
+                
                 $readingData = [
                 'sensor_id' => $sensorFlujo->id,
                 'value' => (float) $data['value'],

@@ -193,7 +193,7 @@ class SensorController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required','string','max:255',
-            'user' => 'required|string|exists:users,name',
+            //'user' => 'required|string|exists:users,name',
             'location' => 'required|string|exists:locations,name',
             'almacenamiento' => 'required|string',
             'alert_max_value' => 'required|string',
@@ -212,8 +212,9 @@ class SensorController extends Controller
 
         // 3. Obtener los IDs de user y location a partir de sus nombres
         // Esto asume que tienes un campo 'name' en tus tablas 'users' y 'locations'
-        $user = User::where('name', $request->user)->first();
+        
         $location = Location::where('name', $request->location)->first();
+        /* $user = User::where('name', $request->user)->first();
 
         // Verificar si el usuario o la ubicación existen
         if (!$user) {
@@ -221,13 +222,13 @@ class SensorController extends Controller
         }
         if (!$location) {
             return response()->json(['message' => 'Location not found.'], 404);
-        }
+        } */
 
         // 4. Actualizar los atributos del sensor
         // Asegúrate de que los nombres de los campos en la base de datos coincidan
         // con los nombres de los campos en el request.
         $sensor->name = $request->name;
-        $sensor->user_id = $user->id; // Asigna el ID del usuario
+        //$sensor->user_id = $user->id; // Asigna el ID del usuario
         $sensor->location_id = $location->id; // Asigna el ID de la ubicación
         $sensor->almacenamiento = $request->almacenamiento;
         $sensor->alert_max_value = $request->alert_max_value;

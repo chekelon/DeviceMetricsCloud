@@ -15,7 +15,6 @@ class Sensor extends Model
      */
     protected $fillable = [
         'name', 
-        'user_id',
         'type_sensor_id',
         'sensor_type_id',
         'location_id',

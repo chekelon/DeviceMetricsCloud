@@ -79,3 +79,17 @@
 ::-webkit-scrollbar-thumb:hover {
     background: #16a34a;
 }
+
+.overflow-y-auto::-webkit-scrollbar {
+    width: 4px;
+}
+.overflow-y-auto::-webkit-scrollbar-track {
+    background: transparent;
+}
+.overflow-y-auto::-webkit-scrollbar-thumb {
+    background: rgba(0, 255, 135, 0.3);
+    border-radius: 2px;
+}
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 255, 135, 0.6);
+}

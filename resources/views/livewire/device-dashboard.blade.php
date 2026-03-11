@@ -34,8 +34,14 @@
                         <div class="p-4 border-b border-tech-border bg-gradient-to-r from-tech-green/10 to-transparent">
                             <h2 class="font-bold text-sm tracking-wider text-tech-green">UBICACIONES</h2>
                         </div>
+
+                        <!-- Loading ubicaciones -->
+                        <div x-show="loadingUbicaciones" class="flex flex-col items-center justify-center py-8 space-y-3">
+                            <div class="w-6 h-6 border-2 border-tech-green/20 border-t-tech-green rounded-full animate-spin"></div>
+                            <p class="text-xs text-tech-green tracking-widest animate-pulse">CARGANDO UBICACIONES...</p>
+                        </div>
                         
-                        <div class="p-4 space-y-2">
+                        <div x-show="!loadingUbicaciones" class="p-4 space-y-2 overflow-y-auto" :style="ubicaciones.length > 5 ? 'max-height: 280px;' : ''">
                             <template x-for="ubicacion in ubicaciones" :key="ubicacion.id">
                                 <button 
                                     @click="selectUbicacion(ubicacion)"
@@ -80,16 +86,24 @@
                                     <span x-text="selectedUbicacion?.sensores.length"></span> sensores activos
                                 </p>
                             </div>
-                            <div class="text-xs text-gray-500">
+                            <!-- <div class="text-xs text-gray-500">
                                 Última actualización: <span x-text="lastUpdate"></span>
-                            </div>
+                            </div> -->
                         </div>
 
-                        <div class="space-y-6">
+                        <!-- Loading overlay -->
+                        <div x-show="loading" class="flex flex-col items-center justify-center py-20 space-y-4">
+                            <div class="w-10 h-10 border-2 border-tech-green/20 border-t-tech-green rounded-full animate-spin"></div>
+                            <p class="text-sm text-tech-green tracking-widest animate-pulse">CARGANDO SENSORES...</p>
+                        </div>
+
+                    
+
+                        <div x-show="!loading" class="space-y-6">
                             <template x-for="sensor in selectedUbicacion?.sensores" :key="sensor.id">
 
                                 <!-- ✅ ÚNICO elemento raíz del x-for: contiene AMBAS cards -->
-                                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 items-stretch">
+                                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6 items-stretch">
 
                                     <!-- ══ CARD SENSOR ══ -->
                                     <div class="bg-tech-panel border border-tech-border rounded-lg overflow-hidden slide-in flex flex-col h-full">
@@ -349,6 +363,7 @@
                                 </div><!-- ══ FIN wrapper row ══ -->
                             </template>
                         </div>
+                    
                     </div>
                 </div>
             </div>
@@ -388,10 +403,13 @@
                     username: 'cheke',
                     password: '123456'
                 },
+                loading: false,
+                loadingUbicaciones: true,
                 
                 // Ubicaciones y sensores
                 
                 ubicaciones: (() => {
+                    
                     const locations = @json($locations).map(location => ({
                         id: location.id,
                         nombre: location.name.toUpperCase(),
@@ -406,8 +424,11 @@
                             capacidad: sensor.capacidad ?? '',
                         }))
                     }));
+                   
                     
                     return locations;
+
+                   
                 })(),  /*ubicaciones: [
                     {
                         id: 4,
@@ -446,6 +467,11 @@
                     this.connectMQTT();
                     this.updateTime();
                     setInterval(() => this.updateTime(), 1000);
+
+                    // Las ubicaciones vienen del servidor, ya están listas al montar
+                    this.$nextTick(() => {
+                        this.loadingUbicaciones = false;
+                    });
                 },
                 
                 updateTime() {
@@ -503,6 +529,7 @@
                 },
                 
                 async selectUbicacion(ubicacion) {
+                    this.loading = true; // 👈 activar
                     // Desuscribirse de topics anteriores
                     if (this.selectedUbicacion && this.mqttClient) {
                         this.selectedUbicacion.sensores.forEach(sensor => {
@@ -532,6 +559,13 @@
                         this.showToastMessage(`Monitoreo activo: ${ubicacion.nombre}`, 'success');
                     }
 
+                    this.$nextTick(() => {
+                        setTimeout(() => {
+                            Object.values(window._charts || {}).forEach(chart => chart.resize());
+                        }, 150);
+                    });
+
+                    this.loading = false; // 👈 desactivar
                     this.$nextTick(() => {
                         setTimeout(() => {
                             Object.values(window._charts || {}).forEach(chart => chart.resize());

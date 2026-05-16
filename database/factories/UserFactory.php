@@ -27,7 +27,7 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'name' => 'Administrador',
             'email' => env('ADMIN_EMAIL'),//fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => bcrypt(env('ADMIN_PASSWORD')),//static::$password ??= Hash::make('password'),

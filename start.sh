@@ -17,10 +17,13 @@ if [ ! -f /var/www/html/.env ]; then
     php artisan key:generate
 fi
 
+
+
 # Limpiar cache
 php artisan config:clear
 php artisan cache:clear
 php artisan view:clear
+
 
 # Ejecutar migraciones (opcional, comenta si no quieres auto-migración)
 # php artisan migrate --force

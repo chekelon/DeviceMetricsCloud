@@ -9,7 +9,7 @@ services:
     volumes:
       - ./.env:/var/www/html/.env  # Solo el .env
     ports:
-      - "8080:80"
+      - "80:80"
       - "443:443"
       # Sin 5173 — Vite no corre en prod
     networks:

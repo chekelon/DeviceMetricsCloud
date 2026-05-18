@@ -22,24 +22,16 @@ if ! grep -q "^APP_KEY=base64:" /var/www/html/.env; then
     php artisan key:generate --force
 fi
 
-# Esperar a que MySQL esté listo
-echo "Esperando a que MySQL esté listo..."
-until mysql -h "${DB_HOST}" -u root -p"${DB_ROOT_PASSWORD}" -e "SELECT 1" &>/dev/null; do
-    echo "MySQL no está listo, esperando 3 segundos..."
-    sleep 3
-done
-echo "MySQL listo!"
-
 # Crear base de datos y usuario si no existen
 echo "Configurando base de datos y usuario..."
-mysql -h "${DB_HOST}" -u root -p"${DB_ROOT_PASSWORD}" <<EOF
-CREATE DATABASE IF NOT EXISTS \`${DB_DATABASE}\`;
-CREATE USER IF NOT EXISTS '${DB_USERNAME}'@'%' IDENTIFIED BY '${DB_PASSWORD}';
-GRANT ALL PRIVILEGES ON \`${DB_DATABASE}\`.* TO '${DB_USERNAME}'@'%';
-FLUSH PRIVILEGES;
-EOF
-echo "Base de datos y usuario configurados!"
-
+php -r "
+\$pdo = new PDO('mysql:host=${DB_HOST};port=3306', 'root', '${DB_ROOT_PASSWORD}');
+\$pdo->exec(\"CREATE DATABASE IF NOT EXISTS \`${DB_DATABASE}\`\");
+\$pdo->exec(\"CREATE USER IF NOT EXISTS '${DB_USERNAME}'@'%' IDENTIFIED BY '${DB_PASSWORD}'\");
+\$pdo->exec(\"GRANT ALL PRIVILEGES ON \`${DB_DATABASE}\`.* TO '${DB_USERNAME}'@'%'\");
+\$pdo->exec('FLUSH PRIVILEGES');
+echo 'Listo!';
+"
 
 php artisan package:discover --ansi
 

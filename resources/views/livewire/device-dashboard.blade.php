@@ -399,7 +399,7 @@
                 mqttClient: null,
                 mqttConnected: false,
                 mqttConfig: {
-                    broker: 'ws://mqtt.devicemetricscloud.com/mqtt:9001',
+                    broker: 'ws://157.245.176.211/mqtt:9001',
                     username: 'cheke',
                     password: '123456'
                 },

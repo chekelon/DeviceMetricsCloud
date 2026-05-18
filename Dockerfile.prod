@@ -16,7 +16,7 @@ RUN apk add --no-cache \
     nginx git curl zip unzip \
     libpng-dev libxml2-dev oniguruma-dev \
     libzip-dev icu-dev bash supervisor \
-    mysql-client
+    mariadb-client
 
 RUN docker-php-ext-install \
     pdo_mysql mbstring exif pcntl bcmath gd intl zip

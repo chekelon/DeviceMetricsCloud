@@ -22,16 +22,20 @@ if ! grep -q "^APP_KEY=base64:" /var/www/html/.env; then
     php artisan key:generate --force
 fi
 
-# Crear base de datos y usuario si no existen
-echo "Configurando base de datos y usuario..."
-php -r "
-\$pdo = new PDO('mysql:host=${DB_HOST};port=3306', 'root', '${DB_ROOT_PASSWORD}');
-\$pdo->exec(\"CREATE DATABASE IF NOT EXISTS \`${DB_DATABASE}\`\");
-\$pdo->exec(\"CREATE USER IF NOT EXISTS '${DB_USERNAME}'@'%' IDENTIFIED BY '${DB_PASSWORD}'\");
-\$pdo->exec(\"GRANT ALL PRIVILEGES ON \`${DB_DATABASE}\`.* TO '${DB_USERNAME}'@'%'\");
-\$pdo->exec('FLUSH PRIVILEGES');
-echo 'Listo!';
-"
+# Esperar MySQL con reintentos
+echo "Esperando a que MySQL esté listo..."
+until php -r "
+try {
+    new PDO('mysql:host=${DB_HOST};port=3306', '${DB_USERNAME}', '${DB_PASSWORD}');
+    exit(0);
+} catch(Exception \$e) {
+    exit(1);
+}
+" 2>/dev/null; do
+    echo "MySQL no está listo, esperando 3 segundos..."
+    sleep 3
+done
+echo "MySQL listo!"
 
 php artisan package:discover --ansi
 

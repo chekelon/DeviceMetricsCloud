@@ -7,6 +7,8 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Region;
+use App\Models\Role;
+
 
 class AdminUserSeeder extends Seeder
 {
@@ -20,7 +22,11 @@ class AdminUserSeeder extends Seeder
             ['name' => 'Region Default']
         );
 
-        User::firstOrCreate(
+        $role = Role::firstOrCreate(
+            ['name'=> 'Admin']
+        );
+
+        $user = User::firstOrCreate(
             ['email' => env('ADMIN_EMAIL')],
             [
                 'name' => 'Administrador',
@@ -34,5 +40,10 @@ class AdminUserSeeder extends Seeder
                 'current_team_id' => null,
             ]
         );
+
+        $user->roles()->suncWithoutDetaching($role->id);
+
+
+        
     }
 }

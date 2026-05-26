@@ -8,7 +8,9 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Region;
 use App\Models\Role;
-
+use App\Models\SensorType;
+use App\Models\Sensor;
+use App\Models\Location;
 
 class AdminUserSeeder extends Seeder
 {
@@ -24,6 +26,35 @@ class AdminUserSeeder extends Seeder
 
         $role = Role::firstOrCreate(
             ['name'=> 'Admin']
+        );
+
+        $sensor_type = SensorType::firstOrCreate(
+            ['name'=> 'distancia',
+            'description' => 'mide el nivel de agua']
+        );
+
+        $location = Location::firstOrCreate(
+            [ 
+             'name'=>'Casa',
+             'region_id'=> $region->id
+            ]
+        );
+
+        $sensor = Sensor::firstOrCreate(
+            [
+                'type_sensor_id'=> $sensor_type->id,
+                'name'=> 'tinaco',
+                'almacenamiento'=>'tinaco',
+                'min_value'=>20,
+                'max_value'=>90,
+                'capacidad'=>450,
+                'location_id'=> $location->id,
+                'alert_min_value'=>30,
+                'alert_max_value'=>80,
+                'alert_notification_interval'=>1,
+                'interval_reading'=>60
+
+            ],
         );
 
         $user = User::firstOrCreate(

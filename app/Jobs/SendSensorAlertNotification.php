@@ -201,7 +201,7 @@ class SendSensorAlertNotification implements ShouldQueue
     private function handleFailedTokens($report, array $tokens): void
     {
         foreach ($report->failures()->getItems() as $failure) {
-            $failedToken = $tokens[$failure->messageIndex()] ?? null;
+            $failedToken = $tokens[$failure->index()] ?? null;
 
             if (!$failedToken) {
                 continue;

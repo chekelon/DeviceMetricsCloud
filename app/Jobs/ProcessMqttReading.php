@@ -33,12 +33,13 @@ class ProcessMqttReading implements ShouldQueue
     public function handle(): void
     {   
          $sensor = Sensor::find($this->readingData['sensor_id']);
-         $lastReading = $sensor->latestReading;
+         
 
          if (!$sensor) {
-            Log::warning("[ProcessMqttReading] Sensor ID {$this->readingData['sensor_id']} no encontrado.");
+            Log::warning("[ProcessMqttReading] Sensor ID  no encontrado.");
             return;
         }
+        $lastReading = $sensor->latestReading;
         try {
             if($lastReading != null){
                 $this->checkThresholdsAndAlert($sensor);
@@ -74,6 +75,7 @@ class ProcessMqttReading implements ShouldQueue
                 ->first();
         Log::info("[ProcessMqttReading] Tipo de sensor : {$sensor->sensorType->name} ");
         $lastFiveReadings = $sensor->readings()->latest()->take(5)->get();
+        $valuePorcent = (float) $this->readingData['value'];
        if($lastNotification != null && $lastFiveReadings->isNotEmpty() && $sensor->sensorType->name == 'flujo'){
 
         $lastFiveReadings = $lastFiveReadings->sortByDesc('created_at');
@@ -91,7 +93,7 @@ class ProcessMqttReading implements ShouldQueue
 
         if($sensor->sensorType->name == 'flujo' && $allZero){
             
-             $valuePorcent = (float) $this->readingData['value'];
+            //$valuePorcent = (float) $this->readingData['value'];
              
             SendSensorAlertNotification::dispatch(
                     $this->readingData,
@@ -100,8 +102,26 @@ class ProcessMqttReading implements ShouldQueue
                 )->onQueue('notifications');
         }
 
-        if($sensor->sensorType->name == 'distancia'){
+        if($sensor->sensorType->name == 'distancia' && $lastNotification != null){
             $this->sendNotificationSensorDistancia($sensor, $lastNotification);
+        }else{
+
+            $title = '';
+            if($valuePorcent >= $sensor->alert_max_value ){
+                $title = 'above';
+            }
+            if($valuePorcent <= $sensor->alert_min_value){
+                $title = 'below';
+            }
+
+            if($title != ''){
+                SendSensorAlertNotification::dispatch(
+                    $this->readingData,
+                    $title,
+                    $valuePorcent
+                )->onQueue('notifications');
+            }
+             
         }
 
         
@@ -152,8 +172,8 @@ class ProcessMqttReading implements ShouldQueue
             }
             return;
         }
-        // ---- Alerta: nivel por DEBAJO del mínimo (porcentaje = 100 o positivo) ----
 
+        // ---- Alerta: nivel por DEBAJO del mínimo (porcentaje = 100 o positivo) ----
         if ($valuePorcent <= $sensor->alert_min_value) {
                 Log::warning("[ProcessMqttReading] ALERTA NIVEL BAJO. Sensor: {$sensor->id} | Porcentaje: {$valuePorcent}%");
                 //TODO: validar que lastNotification no se null, si es null enviar notification

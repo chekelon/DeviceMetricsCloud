@@ -8,6 +8,7 @@ services:
     working_dir: /var/www/html      # igual que en dev
     volumes:
       - ./.env:/var/www/html/.env  # Solo el .env
+      - ./storage/app/firebase:/var/www/html/storage/app/firebase
     ports:
       - "80:80"
       - "443:443"

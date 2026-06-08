@@ -73,7 +73,6 @@ yarn-error.log
 
 # Composer
 composer.phar
-composer.lock
 
 # Archivos de sistema
 *.pid

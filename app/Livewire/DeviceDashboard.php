@@ -28,7 +28,7 @@ class DeviceDashboard extends Component
                 'readings' => $sensor->readings()
                 ->whereDate('created_at',today())
                 ->latest()
-                ->take(30)
+                //->take(30)
                 ->get()
                 ->toArray()
             ]

@@ -664,8 +664,8 @@
                             const chart = window._charts?.[id];
                             if (!chart || readings.length === 0) return;
 
-                            const maxPoints = 30;
-                            const slice = readings.slice(-maxPoints); // últimas 30
+                            //const maxPoints = 30;
+                            const slice = readings; // últimas 30
 
                             chart.data.labels = slice.map(r =>
                                 r.created_at

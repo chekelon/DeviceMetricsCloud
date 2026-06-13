@@ -213,7 +213,7 @@
                                     <!-- ══ CARD GRÁFICA ══ -->
                                     <div class="bg-tech-panel border border-tech-border rounded-lg overflow-hidden slide-in flex flex-col h-full"
                                         x-data="{
-                                            maxPoints: 30,
+                                           
                                             get accentColor() { return sensor.tipo === 'flujo' ? '#00d4ff' : '#f6c90e' },
                                             get accentColorAlpha() { return sensor.tipo === 'flujo' ? 'rgba(0,212,255,0.10)' : 'rgba(246,201,14,0.10)' },
                                             get label() { return sensor.tipo === 'flujo' ? 'L/min' : '%' },
@@ -238,8 +238,11 @@
                                                             borderColor: this.accentColor,
                                                             borderWidth: 2,
                                                             backgroundColor: this.accentColorAlpha,
-                                                            pointRadius: 0,
-                                                            pointHoverRadius: 4,
+                                                            pointRadius: 2,
+                                                            pointHoverRadius: 6,
+                                                            pointBackgroundColor: '#f7df7c',
+                                                            pointBorderColor: '#ffffff',
+                                                            pointBorderWidth: 1,
                                                             pointHoverBackgroundColor: this.accentColor,
                                                             tension: 0.4,
                                                             fill: true,
@@ -268,10 +271,13 @@
                                                             y: {
                                                                 display: true,
                                                                 grid: { color: 'rgba(255,255,255,0.04)', drawBorder: false },
+                                                                min:0,
+                                                                max:120,
                                                                 ticks: {
+                                                                    
+                                                                    stepSize:10,
                                                                     color: '#4a5568',
                                                                     font: { size: 10 },
-                                                                    maxTicksLimit: 5,
                                                                     callback: v => v + ' ' + this.label
                                                                 }
                                                             }
@@ -316,7 +322,7 @@
                                                         <div class="text-sm font-bold"
                                                             :class="sensor.tipo === 'flujo' ? 'text-tech-blue' : 'text-tech-yellow'"
                                                             x-text="'HISTÓRICO #' + sensor.id"></div>
-                                                        <div class="text-xs text-gray-500">TIEMPO REAL · ÚLTIMAS 30 LECTURAS</div>
+                                                        <div class="text-xs text-gray-500">TIEMPO REAL </div>
                                                     </div>
                                                 </div>
                                                 <div class="px-3 py-1 rounded border text-xs font-bold font-mono"
@@ -617,6 +623,7 @@
                          if (topic.startsWith(`edificio/${edificio}/${almacenamiento}/sensor_distancia`) ) {
                             console.log('Mensaje data message:', `edificio/${edificio}/${almacenamiento}/sensor_distancia`, data.value);
                             const sensorId = data.sensor_id;
+                            const horaActual = new Date().toLocaleTimeString('es-ES');
                             this.sensorData = {
                                 ...this.sensorData,
                                 [sensorId]: {
@@ -624,9 +631,12 @@
                                     tipo: data.tipo,
                                     alert_min_value: data.alert_min_value,
                                     alert_max_value: data.alert_max_value,
-                                    timestamp: new Date().toLocaleTimeString('es-ES')
+                                    timestamp: horaActual,
                                 }
-                            };
+                            }; 
+
+                           
+
                             console.log('Estado actual de sensorData:', this.sensorData);
                         }
                         
